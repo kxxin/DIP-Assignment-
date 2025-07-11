@@ -53,3 +53,56 @@ plt.ylabel('Number of Frames')
 plt.grid(True)
 plt.tight_layout()
 plt.show()
+
+
+#Part5_addEndScreen
+
+# Part 1: Set input/output info
+# Open the first video
+video1 = cv2.VideoCapture("street.mp4")
+
+# Open the second video
+video2 = cv2.VideoCapture("endscreen.mp4")
+
+# Make sure both videos are opened successfully
+if not video1.isOpened() or not video2.isOpened():
+    print("Error opening one of the videos.")
+    exit()
+
+# Get properties (assuming both videos have same resolution and FPS)
+fps = video1.get(cv2.CAP_PROP_FPS)  # Should be 30.0
+width = int(video1.get(cv2.CAP_PROP_FRAME_WIDTH))
+height = int(video1.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+# Create output writer
+out = cv2.VideoWriter("merged_video.avi",
+                      cv2.VideoWriter_fourcc(*"MJPG"),
+                      fps,
+                      (width, height))
+
+# Part 2: Write frames of Video 1
+# Get total frames in Video 1
+total_frames_v1 = int(video1.get(cv2.CAP_PROP_FRAME_COUNT))
+
+for frame_count in range(total_frames_v1):
+    success, frame = video1.read()  # Read a frame
+    if not success:
+        break  # End if read fails
+    out.write(frame)  # Write to output
+
+# Part 3: Write frames of Video 2
+# Get total frames in Video 2
+total_frames_v2 = int(video2.get(cv2.CAP_PROP_FRAME_COUNT))
+
+for frame_count in range(total_frames_v2):
+    success, frame = video2.read()  # Read a frame
+    if not success:
+        break  # End if read fails
+    out.write(frame)  # Append to output
+
+# Part 4: Release resources
+video1.release()
+video2.release()
+out.release()
+
+print("Merged video created successfully.")
